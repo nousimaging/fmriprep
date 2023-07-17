@@ -82,3 +82,13 @@ class Label2Mask(SimpleInterface):
 
         self._results["out_file"] = out_file
         return runtime
+
+class StdDevVolInputSpec(TraitedSpec):
+    in_file = File(exists=True, mandatory=True, desc="Input imaging file")
+    out_file = File(desc="Output file name")
+
+class StdDevVolOutputSpec(TraitedSpec):
+    out_file = File(desc="Output file name")
+
+class StdDevVol(SimpleInterface):
+    a=1
