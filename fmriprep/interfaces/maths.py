@@ -1,6 +1,7 @@
 import os
 
 import numpy as np
+import nibabel as nb
 from nipype.interfaces.base import File, SimpleInterface, TraitedSpec, traits
 from nipype.utils.filemanip import fname_presuffix
 
@@ -68,8 +69,6 @@ class Label2Mask(SimpleInterface):
     output_spec = Label2MaskOutputSpec
 
     def _run_interface(self, runtime):
-        import nibabel as nb
-
         img = nb.load(self.inputs.in_file)
 
         mask = np.uint16(img.dataobj) == self.inputs.label_val
@@ -85,10 +84,26 @@ class Label2Mask(SimpleInterface):
 
 class StdDevVolInputSpec(TraitedSpec):
     in_file = File(exists=True, mandatory=True, desc="Input imaging file")
-    out_file = File(desc="Output file name")
 
 class StdDevVolOutputSpec(TraitedSpec):
     out_file = File(desc="Output file name")
 
 class StdDevVol(SimpleInterface):
-    a=1
+    "Create new volume for standard deviation across time (per voxel)"
+
+    input_spec = StdDevVolInputSpec
+    output_spec = StdDevVolOutputSpec
+
+    def _run_interface(self, runtime):
+        img = nb.load(self.inputs.in_file)
+        img_data = img.get_fdata()
+
+        std_img_data = np.std(img_data,axis=3)
+        out_img = nb.Nifti1Image(std_img_data, img.affine, header=img.header)
+
+        out_file = fname_presuffix(self.inputs.in_file, suffix="_std", newpath=runtime.cwd)
+
+        out_img.to_filename(out_file)
+
+        self._results["out_file"] = out_file
+        return runtime
