@@ -36,6 +36,8 @@ from __future__ import annotations
 
 import typing as ty
 
+from ...interfaces.maths import StdDevVol
+
 from nipype import Function
 from nipype.interfaces import freesurfer as fs
 from nipype.interfaces import fsl
@@ -294,7 +296,7 @@ def init_goodvoxels_bold_mask_wf(mem_gb: float, name: str = "goodvoxels_bold_mas
     )
 
     stdev_volume = pe.Node(
-        fsl.maths.StdImage(dimension='T'),
+        StdDevVol,
         name="stdev_volume",
         mem_gb=DEFAULT_MEMORY_MIN_GB,
     )
