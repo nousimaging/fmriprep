@@ -82,23 +82,43 @@ class Label2Mask(SimpleInterface):
         self._results["out_file"] = out_file
         return runtime
 
-class StdDevVolInputSpec(TraitedSpec):
+class SimpleMathInputSpec(TraitedSpec):
     in_file = File(exists=True, mandatory=True, desc="Input imaging file")
 
-class StdDevVolOutputSpec(TraitedSpec):
+class SimpleMathOutputSpec(TraitedSpec):
     out_file = File(desc="Output file name")
 
 class StdDevVol(SimpleInterface):
     "Create new volume for standard deviation across time (per voxel)"
 
-    input_spec = StdDevVolInputSpec
-    output_spec = StdDevVolOutputSpec
+    input_spec = SimpleMathInputSpec
+    output_spec = SimpleMathOutputSpec
 
     def _run_interface(self, runtime):
         img = nb.load(self.inputs.in_file)
         img_data = img.get_fdata()
 
         std_img_data = np.std(img_data,axis=3)
+        out_img = nb.Nifti1Image(std_img_data, img.affine, header=img.header)
+
+        out_file = fname_presuffix(self.inputs.in_file, suffix="_std", newpath=runtime.cwd)
+
+        out_img.to_filename(out_file)
+
+        self._results["out_file"] = out_file
+        return runtime
+    
+class MeanVol(SimpleInterface):
+    "Create new volume for mean across time"
+
+    input_spec = SimpleMathInputSpec
+    output_spec = SimpleMathOutputSpec
+
+    def _run_interface(self, runtime):
+        img = nb.load(self.inputs.in_file)
+        img_data = img.get_fdata()
+
+        std_img_data = np.mean(img_data,axis=3)
         out_img = nb.Nifti1Image(std_img_data, img.affine, header=img.header)
 
         out_file = fname_presuffix(self.inputs.in_file, suffix="_std", newpath=runtime.cwd)
