@@ -36,7 +36,7 @@ from __future__ import annotations
 
 import typing as ty
 
-from ...interfaces.maths import StdDevVol, MeanVol
+from ...interfaces.maths import StdDevVol, MeanVol, CovVol
 
 from nipype import Function
 from nipype.interfaces import freesurfer as fs
@@ -296,19 +296,19 @@ def init_goodvoxels_bold_mask_wf(mem_gb: float, name: str = "goodvoxels_bold_mas
     )
 
     stdev_volume = pe.Node(
-        StdDevVol,
+        StdDevVol(),
         name="stdev_volume",
         mem_gb=DEFAULT_MEMORY_MIN_GB,
     )
 
     mean_volume = pe.Node(
-        MeanVol,
+        MeanVol(),
         name="mean_volume",
         mem_gb=DEFAULT_MEMORY_MIN_GB,
     )
 
     cov_volume = pe.Node(
-        fsl.maths.BinaryMaths(operation='div'),
+        CovVol(),
         name="cov_volume",
         mem_gb=DEFAULT_MEMORY_MIN_GB,
     )
