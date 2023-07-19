@@ -88,6 +88,11 @@ class SimpleMathInputSpec(TraitedSpec):
 class SimpleMathOutputSpec(TraitedSpec):
     out_file = File(desc="Output file name")
 
+class BinaryMathInputSpec(TraitedSpec):
+    in_file = File(exists=True, mandatory=True, desc="Image to operate on")
+    operand_file = File(exists=True, mandatory=True, desc="Image to perform operation with")
+    operand_value = traits.Float(mandatory=False, desc="Value to perform operation with")
+
 class StdDevVol(SimpleInterface):
     "Create new volume for standard deviation across time (per voxel)"
 
