@@ -169,23 +169,23 @@ class MeanVol(SimpleInterface):
         self._results["out_file"] = out_file
         return runtime
     
-class CovVol(SimpleInterface):
+class BinaryDiv(SimpleInterface):
     "Create covariance volume"
 
     input_spec = BinaryMathInputSpec
     output_spec = SimpleMathOutputSpec
 
     def _run_interface(self, runtime):
-        std_img = nb.load(self.inputs.in_file)
-        std_img_data = std_img.get_fdata()
+        in_img = nb.load(self.inputs.in_file)
+        in_img_data = in_img.get_fdata()
 
-        mean_img = nb.load(self.inputs.operand_file)
-        mean_img_data = mean_img.get_fdata()
+        op_img = nb.load(self.inputs.operand_file)
+        op_img_data = op_img.get_fdata()
 
-        out_img_data = np.divide(std_img_data,mean_img_data)
+        out_img_data = np.divide(in_img_data,op_img_data)
 
-        out_img = nb.Nifti1Image(out_img_data, std_img.affine, header=std_img.header)
-        out_file = fname_presuffix(self.inputs.in_file, suffix="_cov", newpath=runtime.cwd)
+        out_img = nb.Nifti1Image(out_img_data, in_img.affine, header=in_img.header)
+        out_file = fname_presuffix(self.inputs.in_file, suffix="_div", newpath=runtime.cwd)
         out_img.to_filename(out_file)
 
         self._results["out_file"] = out_file
