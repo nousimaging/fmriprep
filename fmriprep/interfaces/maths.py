@@ -129,6 +129,9 @@ class BinaryMathInputSpec(TraitedSpec):
     operand_file = File(exists=True, mandatory=True, desc="Image to perform operation with")
     operand_value = traits.Float(mandatory=False, desc="Value to perform operation with")
 
+class SimpleStatsOutputSpec(TraitedSpec):
+    out_stat = traits.Any(desc='stats output')
+
 class StdDevVol(SimpleInterface):
     "Create new volume for standard deviation across time (per voxel)"
 
