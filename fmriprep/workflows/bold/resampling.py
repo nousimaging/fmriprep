@@ -36,7 +36,7 @@ from __future__ import annotations
 
 import typing as ty
 
-from ...interfaces.maths import StdDevVol, MeanVol, BinaryDiv, CustomApplyMask
+from ...interfaces.maths import StdDevVol, MeanVol, BinaryDiv, CustomApplyMask,NonZeroMean
 
 from nipype import Function
 from nipype.interfaces import freesurfer as fs
@@ -320,7 +320,7 @@ def init_goodvoxels_bold_mask_wf(mem_gb: float, name: str = "goodvoxels_bold_mas
     )
 
     cov_ribbon_mean = pe.Node(
-        fsl.ImageStats(op_string='-M'),
+        NonZeroMean(),
         name="cov_ribbon_mean",
         mem_gb=DEFAULT_MEMORY_MIN_GB,
     )
@@ -397,7 +397,7 @@ def init_goodvoxels_bold_mask_wf(mem_gb: float, name: str = "goodvoxels_bold_mas
     )
 
     mod_ribbon_mean = pe.Node(
-        fsl.ImageStats(op_string='-M'),
+        NonZeroMean(),
         name="mod_ribbon_mean",
         mem_gb=DEFAULT_MEMORY_MIN_GB,
     )

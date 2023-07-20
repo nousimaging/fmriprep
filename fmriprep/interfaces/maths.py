@@ -129,6 +129,9 @@ class BinaryMathInputSpec(TraitedSpec):
     operand_file = File(exists=True, mandatory=True, desc="Image to perform operation with")
     operand_value = traits.Float(mandatory=False, desc="Value to perform operation with")
 
+class SimpleStatsOutputSpec(TraitedSpec):
+    out_stat = traits.Any(desc='stats output')
+
 class StdDevVol(SimpleInterface):
     "Create new volume for standard deviation across time (per voxel)"
 
@@ -189,4 +192,22 @@ class BinaryDiv(SimpleInterface):
         out_img.to_filename(out_file)
 
         self._results["out_file"] = out_file
+        return runtime
+    
+class NonZeroMean(SimpleInterface):
+    "Calculate mean of nonzero voxels"
+
+    input_spec = SimpleMathInputSpec
+    output_spec = SimpleStatsOutputSpec
+
+    def _run_interface(self, runtime):
+        #load in img data
+        in_img = nb.load(self.inputs.in_file)
+        in_img_data = in_img.get_fdata()
+
+        #find mean of nonzeros
+        in_img_data = np.array(in_img_data)
+        img_mean = np.mean(in_img_data[in_img_data!=0])
+
+        self._results["out_stat"] = img_mean
         return runtime
