@@ -211,3 +211,21 @@ class NonZeroMean(SimpleInterface):
 
         self._results["out_stat"] = img_mean
         return runtime
+    
+class NonZeroStDev(SimpleInterface):
+    "Calculate mean of nonzero voxels"
+
+    input_spec = SimpleMathInputSpec
+    output_spec = SimpleStatsOutputSpec
+
+    def _run_interface(self, runtime):
+        #load in img data
+        in_img = nb.load(self.inputs.in_file)
+        in_img_data = in_img.get_fdata()
+
+        #find mean of nonzeros
+        in_img_data = np.array(in_img_data)
+        img_mean = np.std(in_img_data[in_img_data!=0])
+
+        self._results["out_stat"] = img_mean
+        return runtime
