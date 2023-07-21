@@ -254,3 +254,33 @@ class BinarizeVol(SimpleInterface):
 
         self._results["out_file"] = out_file
         return runtime
+    
+class ThreshInputSpec(TraitedSpec):
+    in_file = File(exists=True, mandatory=True, desc="Image to threshold")
+    thresh = traits.Float(mandatory=True, desc="Cutoff value")
+
+class Thresh(SimpleInterface):
+    "Sets values below threshold to 0"
+
+    input_spec = ThreshInputSpec
+    output_spec = SimpleMathOutputSpec
+
+    def _run_interface(self,runtime):
+        #load img data
+        in_img = nb.load(self.inputs.in_file)
+        in_img_data = in_img.get_fdata()
+
+        #set as array for easy broadcasting
+        in_img_data = np.array(in_img_data)
+
+        #apply threshold
+        thresh_val = self.inputs.thresh
+        in_img_data[in_img_data<thresh_val] = 0
+
+        #write out new img
+        out_img = nb.Nifti1Image(in_img_data, in_img.affine, header=in_img.header)
+        out_file = fname_presuffix(self.inputs.in_file, suffix="_thr", newpath=runtime.cwd)
+        out_img.to_filename(out_file)
+
+        self._results["out_file"] = out_file
+        return runtime
