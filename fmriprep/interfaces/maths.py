@@ -284,3 +284,16 @@ class Thresh(SimpleInterface):
 
         self._results["out_file"] = out_file
         return runtime
+    
+class SmoothNorm(SimpleInterface):
+
+    input_spec = SimpleMathInputSpec
+    output_spec = SimpleMathOutputSpec
+
+    def _run_interface(self,runtime):
+        #load img data
+        in_img = nb.load(self.inputs.in_file)
+        in_img_data = in_img.get_fdata()
+
+        #set as array for easy broadcasting
+        in_img_data = np.array(in_img_data)
