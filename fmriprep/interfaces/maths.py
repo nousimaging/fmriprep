@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 import nibabel as nb
-from nipype.interfaces.base import File, SimpleInterface, TraitedSpec, traits, CommandLineInputSpec
+from nipype.interfaces.base import File, SimpleInterface, TraitedSpec, traits, CommandLineInputSpec, InputMultiPath
 from nipype.utils.filemanip import fname_presuffix
 from nipype.interfaces.workbench.base import WBCommand
 
@@ -338,3 +338,16 @@ class WBSmoothVol(WBCommand):
     output_spec = SimpleMathOutputSpec
 
     _cmd = "wb_command -volume-smoothing"
+
+class GoodVoxMaskInputSpec(TraitedSpec):
+    in_file = File(exists=True, mandatory=True, desc="input image")
+    operand_files = InputMultiPath(
+        File(exists=True),
+        mandatory=True,
+        desc=("list of file names to plug into op string"),
+    )
+
+class GoodVoxMask(SimpleInterface):
+
+    input_spec = GoodVoxMaskInputSpec
+    output_spec = SimpleMathOutputSpec
