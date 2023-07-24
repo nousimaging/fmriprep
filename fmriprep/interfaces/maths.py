@@ -2,8 +2,9 @@ import os
 
 import numpy as np
 import nibabel as nb
-from nipype.interfaces.base import File, SimpleInterface, TraitedSpec, traits
+from nipype.interfaces.base import File, SimpleInterface, TraitedSpec, traits, CommandLineInputSpec
 from nipype.utils.filemanip import fname_presuffix
+from nipype.interfaces.workbench.base import WBCommand
 
 
 class ClipInputSpec(TraitedSpec):
@@ -284,3 +285,56 @@ class Thresh(SimpleInterface):
 
         self._results["out_file"] = out_file
         return runtime
+
+class WBSmoothVolInputSpec(CommandLineInputSpec):
+
+    in_file = File(
+        exists=True,
+        mandatory=True,
+        argstr="%s",
+        position=0,
+        desc="The input NIFTI file",
+    )
+    sigma = traits.Float(
+        mandatory=True,
+        argstr="%s",
+        position=1,
+        desc="the sigma for the gaussian smoothing kernel, in mm",
+    )
+    out_file = File(
+        name_source=["in_file"],
+        name_template="%s_smooth.nii.gz",
+        keep_extension=True,
+        argstr="%s",
+        position=2,
+        desc="The output NIFTI",
+    )
+    fwhm = traits.Bool(
+        position=3,
+        argstr="-fwhm",
+        desc="use fwhm kernel size instead of sigma",
+    )
+    roi = File(
+        exists=True,
+        position=4,
+        argstr="-roi %s",
+        desc="only smooth within ROI",
+    )
+    fix_zeros = traits.Bool(
+        position=5,
+        argstr="-fix-zeros-volume",
+        desc="treat values of zero in the volume as missing data",
+    )
+    subvol = File(
+        exists=True,
+        position=6,
+        argstr="-roi %s",
+        desc="only smooth within subvol",
+    )
+
+class WBSmoothVol(WBCommand):
+
+    input_spec = WBSmoothVolInputSpec
+    output_spec = SimpleMathOutputSpec
+
+    _cmd = "wb_command -volume-smoothing"
