@@ -36,7 +36,7 @@ from __future__ import annotations
 
 import typing as ty
 
-from ...interfaces.maths import StdDevVol, MeanVol, BinaryDiv, CustomApplyMask,NonZeroMean, NonZeroStDev, BinarizeVol, Thresh
+from ...interfaces.maths import StdDevVol, MeanVol, BinaryDiv, CustomApplyMask,NonZeroMean, NonZeroStDev, BinarizeVol, Thresh, WBSmoothVol
 
 from nipype import Function
 from nipype.interfaces import freesurfer as fs
@@ -344,7 +344,7 @@ def init_goodvoxels_bold_mask_wf(mem_gb: float, name: str = "goodvoxels_bold_mas
     )
 
     smooth_norm = pe.Node(
-        fsl.maths.MathsCommand(args="-bin -s 5"),
+        WBSmoothVol(sigma=5,fix_zeros=True),
         name="smooth_norm",
         mem_gb=DEFAULT_MEMORY_MIN_GB,
     )
