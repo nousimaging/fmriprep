@@ -351,3 +351,27 @@ class GoodVoxMask(SimpleInterface):
 
     input_spec = GoodVoxMaskInputSpec
     output_spec = SimpleMathOutputSpec
+
+    #-bin -sub %s -mul -1'
+    #binarize
+    #subtract operand from input
+    #multiply by -1
+
+    def _run_interface(self, runtime):
+        #load in img data
+        in_img = nb.load(self.inputs.in_file)
+        in_img_data = in_img.get_fdata()
+
+        #set as array for easy broadcasting
+        in_img_data = np.array(in_img_data)
+
+        #perform binarization
+        in_img_data[in_img_data<0] = 0
+        in_img_data[in_img_data>0] = 1
+
+        #out_img = nb.Nifti1Image(in_img_data, in_img.affine, header=in_img.header)
+        #out_file = fname_presuffix(self.inputs.in_file, suffix="_bin", newpath=runtime.cwd)
+        #out_img.to_filename(out_file)
+
+        #self._results["out_file"] = out_file
+        return runtime
