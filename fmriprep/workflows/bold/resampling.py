@@ -337,6 +337,12 @@ def init_goodvoxels_bold_mask_wf(mem_gb: float, name: str = "goodvoxels_bold_mas
         mem_gb=DEFAULT_MEMORY_MIN_GB,
     )
 
+    bin_norm = pe.Node(
+        BinarizeVol(),
+        name="bin_norm",
+        mem_gb=DEFAULT_MEMORY_MIN_GB,
+    )
+
     smooth_norm = pe.Node(
         fsl.maths.MathsCommand(args="-bin -s 5"),
         name="smooth_norm",
@@ -456,7 +462,8 @@ def init_goodvoxels_bold_mask_wf(mem_gb: float, name: str = "goodvoxels_bold_mas
             (cov_ribbon, cov_ribbon_std, [("out_file", "in_file")]),
             (cov_ribbon, cov_ribbon_norm, [("out_file", "in_file")]),
             (cov_ribbon_mean, cov_ribbon_norm, [("out_stat", "operand_value")]),
-            (cov_ribbon_norm, smooth_norm, [("out_file", "in_file")]),
+            (cov_ribbon_norm, bin_norm, [("out_file", "in_file")]),
+            (bin_norm, smooth_norm, [("out_file", "in_file")]),
             (smooth_norm, merge_smooth_norm, [("out_file", "in1")]),
             (cov_ribbon_norm, cov_ribbon_norm_smooth, [("out_file", "in_file")]),
             (merge_smooth_norm, cov_ribbon_norm_smooth, [("out", "operand_files")]),

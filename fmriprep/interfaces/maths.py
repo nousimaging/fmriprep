@@ -2,8 +2,9 @@ import os
 
 import numpy as np
 import nibabel as nb
-from nipype.interfaces.base import File, SimpleInterface, TraitedSpec, traits
+from nipype.interfaces.base import File, SimpleInterface, TraitedSpec, traits, CommandLineInputSpec
 from nipype.utils.filemanip import fname_presuffix
+from nipype.interfaces.workbench.base import WBCommand
 
 
 class ClipInputSpec(TraitedSpec):
@@ -284,8 +285,23 @@ class Thresh(SimpleInterface):
 
         self._results["out_file"] = out_file
         return runtime
-    
-class SmoothNorm(SimpleInterface):
+
+class CiftiSmoothInputSpec(CommandLineInputSpec):
+    in_file = File(
+        exists=True,
+        mandatory=True,
+        argstr="%s",
+        position=0,
+        desc="The input NIFTI file",
+    )
+    sigma = traits.Float(
+        mandatory=True,
+        argstr="%s",
+        position=1,
+        desc="the sigma for the gaussian smoothing kernel, in mm",
+    )
+
+class WB_VolSmooth(WBCommand):
 
     input_spec = SimpleMathInputSpec
     output_spec = SimpleMathOutputSpec
@@ -297,3 +313,7 @@ class SmoothNorm(SimpleInterface):
 
         #set as array for easy broadcasting
         in_img_data = np.array(in_img_data)
+
+        #fsl.maths.MathsCommand(args="-bin -s 5")
+        #binarize
+        #smooth with 5 mm kernel
