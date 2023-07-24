@@ -286,7 +286,8 @@ class Thresh(SimpleInterface):
         self._results["out_file"] = out_file
         return runtime
 
-class CiftiSmoothInputSpec(CommandLineInputSpec):
+class WBSmoothVolInputSpec(CommandLineInputSpec):
+
     in_file = File(
         exists=True,
         mandatory=True,
@@ -300,20 +301,40 @@ class CiftiSmoothInputSpec(CommandLineInputSpec):
         position=1,
         desc="the sigma for the gaussian smoothing kernel, in mm",
     )
+    out_file = File(
+        name_source=["in_file"],
+        name_template="%s_smooth.nii.gz",
+        keep_extension=True,
+        argstr="%s",
+        position=2,
+        desc="The output NIFTI",
+    )
+    fwhm = traits.Bool(
+        position=3,
+        argstr="-fwhm",
+        desc="use fwhm kernel size instead of sigma",
+    )
+    roi = File(
+        exists=True,
+        position=4,
+        argstr="-roi %s",
+        desc="only smooth within ROI",
+    )
+    fix_zeros = traits.Bool(
+        position=5,
+        argstr="-fix-zeros-volume",
+        desc="treat values of zero in the volume as missing data",
+    )
+    subvol = File(
+        exists=True,
+        position=6,
+        argstr="-roi %s",
+        desc="only smooth within subvol",
+    )
 
-class WB_VolSmooth(WBCommand):
+class WBSmoothVol(WBCommand):
 
-    input_spec = SimpleMathInputSpec
+    input_spec = WBSmoothVolInputSpec
     output_spec = SimpleMathOutputSpec
 
-    def _run_interface(self,runtime):
-        #load img data
-        in_img = nb.load(self.inputs.in_file)
-        in_img_data = in_img.get_fdata()
-
-        #set as array for easy broadcasting
-        in_img_data = np.array(in_img_data)
-
-        #fsl.maths.MathsCommand(args="-bin -s 5")
-        #binarize
-        #smooth with 5 mm kernel
+    _cmd = "wb_command -volume-smoothing"
