@@ -344,11 +344,6 @@ class GoodVoxMask(SimpleInterface):
     input_spec = BinaryMathInputSpec
     output_spec = SimpleMathOutputSpec
 
-    #-bin -sub %s -mul -1'
-    #binarize
-    #subtract operand from input
-    #multiply by -1
-
     def _run_interface(self, runtime):
         #load in img data
         in_img = nb.load(self.inputs.in_file)
@@ -371,8 +366,34 @@ class GoodVoxMask(SimpleInterface):
         out_data = np.multiply(sub_data,-1)
 
         out_img = nb.Nifti1Image(out_data, in_img.affine, header=in_img.header)
-        out_file = fname_presuffix(self.inputs.in_file, suffix="_bin", newpath=runtime.cwd)
+        out_file = fname_presuffix(self.inputs.in_file, suffix="_goodmask", newpath=runtime.cwd)
         out_img.to_filename(out_file)
+
+        self._results["out_file"] = out_file
+        return runtime
+    
+class NMRibbonNormSmooth(SimpleInterface):
+
+    input_spec = BinaryMathInputSpec
+    output_spec = SimpleMathOutputSpec
+
+    def _run_interface(self, runtime):
+        #load in img data
+        in_img = self.inputs.in_file
+        op_file = self.inputs.operand_file
+        
+        #define output fname
+        out_file = fname_presuffix(self.inputs.in_file, suffix="_normsmooth", newpath=runtime.cwd)
+
+        #define niimath command string
+        cmd_string = 'niimath {in_img} -s 5 -div {op_img} -dilD {outfile}'.format(
+            in_img = in_img,
+            op_img = op_file,
+            outfile=out_file
+        )
+        
+        #call niimath
+        os.system(cmd_string)
 
         self._results["out_file"] = out_file
         return runtime

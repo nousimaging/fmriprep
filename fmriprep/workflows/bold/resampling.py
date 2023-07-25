@@ -39,7 +39,7 @@ import typing as ty
 from ...interfaces.maths import (StdDevVol, MeanVol, BinaryDiv, 
                                  CustomApplyMask, NonZeroMean, 
                                  NonZeroStDev, BinarizeVol, Thresh, 
-                                 WBSmoothVol, GoodVoxMask)
+                                 WBSmoothVol, GoodVoxMask, NMRibbonNormSmooth)
 
 from nipype import Function
 from nipype.interfaces import freesurfer as fs
@@ -352,15 +352,8 @@ def init_goodvoxels_bold_mask_wf(mem_gb: float, name: str = "goodvoxels_bold_mas
         mem_gb=DEFAULT_MEMORY_MIN_GB,
     )
 
-    merge_smooth_norm = pe.Node(
-        niu.Merge(1),
-        name="merge_smooth_norm",
-        mem_gb=DEFAULT_MEMORY_MIN_GB,
-        run_without_submitting=True,
-    )
-
     cov_ribbon_norm_smooth = pe.Node(
-        fsl.maths.MultiImageMaths(op_string='-s 5 -div %s -dilD'),
+        NMRibbonNormSmooth(),
         name="cov_ribbon_norm_smooth",
         mem_gb=DEFAULT_MEMORY_MIN_GB,
     )
@@ -467,9 +460,8 @@ def init_goodvoxels_bold_mask_wf(mem_gb: float, name: str = "goodvoxels_bold_mas
             (cov_ribbon_mean, cov_ribbon_norm, [("out_stat", "operand_value")]),
             (cov_ribbon_norm, bin_norm, [("out_file", "in_file")]),
             (bin_norm, smooth_norm, [("out_file", "in_file")]),
-            (smooth_norm, merge_smooth_norm, [("out_file", "in1")]),
             (cov_ribbon_norm, cov_ribbon_norm_smooth, [("out_file", "in_file")]),
-            (merge_smooth_norm, cov_ribbon_norm_smooth, [("out", "operand_files")]),
+            (smooth_norm, cov_ribbon_norm_smooth, [("out", "operand_file")]),
             (cov_ribbon_mean, cov_norm, [("out_stat", "operand_value")]),
             (cov_volume, cov_norm, [("out_file", "in_file")]),
             (cov_norm, cov_norm_modulate, [("out_file", "in_file")]),
