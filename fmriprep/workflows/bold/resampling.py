@@ -36,7 +36,10 @@ from __future__ import annotations
 
 import typing as ty
 
-from ...interfaces.maths import StdDevVol, MeanVol, BinaryDiv, CustomApplyMask,NonZeroMean, NonZeroStDev, BinarizeVol, Thresh, WBSmoothVol
+from ...interfaces.maths import (StdDevVol, MeanVol, BinaryDiv, 
+                                 CustomApplyMask, NonZeroMean, 
+                                 NonZeroStDev, BinarizeVol, Thresh, 
+                                 WBSmoothVol, GoodVoxMask)
 
 from nipype import Function
 from nipype.interfaces import freesurfer as fs
@@ -441,7 +444,7 @@ def init_goodvoxels_bold_mask_wf(mem_gb: float, name: str = "goodvoxels_bold_mas
     )
 
     goodvoxels_mask = pe.Node(
-        fsl.maths.MultiImageMaths(op_string='-bin -sub %s -mul -1'),
+        GoodVoxMask(),
         name="goodvoxels_mask",
         mem_gb=mem_gb,
     )
@@ -482,9 +485,8 @@ def init_goodvoxels_bold_mask_wf(mem_gb: float, name: str = "goodvoxels_bold_mas
             (mean_volume, bin_mean_volume, [("out_file", "in_file")]),
             (upper_thr_val, goodvoxels_thr, [("upper_thresh", "thresh")]),
             (cov_norm_modulate, goodvoxels_thr, [("out_file", "in_file")]),
-            (bin_mean_volume, merge_goodvoxels_operands, [("out_file", "in1")]),
+            (bin_mean_volume, goodvoxels_mask, [("out_file", "operand_file")]),
             (goodvoxels_thr, goodvoxels_mask, [("out_file", "in_file")]),
-            (merge_goodvoxels_operands, goodvoxels_mask, [("out", "operand_files")]),
         ]
     )
 

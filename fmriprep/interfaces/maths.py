@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 import nibabel as nb
-from nipype.interfaces.base import File, SimpleInterface, TraitedSpec, traits, CommandLineInputSpec
+from nipype.interfaces.base import File, SimpleInterface, TraitedSpec, traits, CommandLineInputSpec, InputMultiPath
 from nipype.utils.filemanip import fname_presuffix
 from nipype.interfaces.workbench.base import WBCommand
 
@@ -338,3 +338,41 @@ class WBSmoothVol(WBCommand):
     output_spec = SimpleMathOutputSpec
 
     _cmd = "wb_command -volume-smoothing"
+
+class GoodVoxMask(SimpleInterface):
+
+    input_spec = BinaryMathInputSpec
+    output_spec = SimpleMathOutputSpec
+
+    #-bin -sub %s -mul -1'
+    #binarize
+    #subtract operand from input
+    #multiply by -1
+
+    def _run_interface(self, runtime):
+        #load in img data
+        in_img = nb.load(self.inputs.in_file)
+        in_img_data = in_img.get_fdata()
+
+        #set as array for easy broadcasting
+        in_img_data = np.array(in_img_data)
+
+        #perform binarization
+        in_img_data[in_img_data<0] = 0
+        in_img_data[in_img_data>0] = 1
+
+        #load in operand data
+        op_data = np.array(nb.load(self.inputs.operand_file).get_fdata())
+
+        #subtract op from input
+        sub_data = in_img_data - op_data
+
+        #multiply by -1
+        out_data = np.multiply(sub_data,-1)
+
+        out_img = nb.Nifti1Image(out_data, in_img.affine, header=in_img.header)
+        out_file = fname_presuffix(self.inputs.in_file, suffix="_bin", newpath=runtime.cwd)
+        out_img.to_filename(out_file)
+
+        self._results["out_file"] = out_file
+        return runtime
