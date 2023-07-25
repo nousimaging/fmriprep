@@ -36,7 +36,10 @@ from __future__ import annotations
 
 import typing as ty
 
-from ...interfaces.maths import StdDevVol, MeanVol, BinaryDiv, CustomApplyMask,NonZeroMean, NonZeroStDev, BinarizeVol, Thresh, WBSmoothVol
+from ...interfaces.maths import (StdDevVol, MeanVol, BinaryDiv, 
+                                 CustomApplyMask, NonZeroMean, 
+                                 NonZeroStDev, BinarizeVol, Thresh, 
+                                 WBSmoothVol, GoodVoxMask)
 
 from nipype import Function
 from nipype.interfaces import freesurfer as fs
@@ -441,7 +444,7 @@ def init_goodvoxels_bold_mask_wf(mem_gb: float, name: str = "goodvoxels_bold_mas
     )
 
     goodvoxels_mask = pe.Node(
-        fsl.maths.MultiImageMaths(op_string='-bin -sub %s -mul -1'),
+        GoodVoxMask(),
         name="goodvoxels_mask",
         mem_gb=mem_gb,
     )

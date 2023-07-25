@@ -339,17 +339,9 @@ class WBSmoothVol(WBCommand):
 
     _cmd = "wb_command -volume-smoothing"
 
-class GoodVoxMaskInputSpec(TraitedSpec):
-    in_file = File(exists=True, mandatory=True, desc="input image")
-    operand_files = InputMultiPath(
-        File(exists=True),
-        mandatory=True,
-        desc=("list of file names to plug into op string"),
-    )
-
 class GoodVoxMask(SimpleInterface):
 
-    input_spec = GoodVoxMaskInputSpec
+    input_spec = BinaryMathInputSpec
     output_spec = SimpleMathOutputSpec
 
     #-bin -sub %s -mul -1'
@@ -369,9 +361,18 @@ class GoodVoxMask(SimpleInterface):
         in_img_data[in_img_data<0] = 0
         in_img_data[in_img_data>0] = 1
 
-        #out_img = nb.Nifti1Image(in_img_data, in_img.affine, header=in_img.header)
-        #out_file = fname_presuffix(self.inputs.in_file, suffix="_bin", newpath=runtime.cwd)
-        #out_img.to_filename(out_file)
+        #load in operand data
+        op_data = np.array(nb.load(self.inputs.operand_file).get_fdata())
 
-        #self._results["out_file"] = out_file
+        #subtract op from input
+        sub_data = in_img_data - op_data
+
+        #multiply by -1
+        out_data = np.multiply(sub_data,-1)
+
+        out_img = nb.Nifti1Image(out_data, in_img.affine, header=in_img.header)
+        out_file = fname_presuffix(self.inputs.in_file, suffix="_bin", newpath=runtime.cwd)
+        out_img.to_filename(out_file)
+
+        self._results["out_file"] = out_file
         return runtime
