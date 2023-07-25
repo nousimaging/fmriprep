@@ -94,6 +94,13 @@ RUN mkdir /opt/convert3d && \
     curl -fsSL --retry 5 https://sourceforge.net/projects/c3d/files/c3d/Experimental/c3d-1.4.0-Linux-gcc64.tar.gz/download \
     | tar -xz -C /opt/convert3d --strip-components 1
 
+# Niimath v1.0.20220720
+FROM downloader as nmath
+RUN mkdir /opt/niimath && \
+    curl -fLO https://github.com/rordenlab/niimath/releases/latest/download/niimath_lnx.zip && \
+    unzip niimath_lnx.zip -d /opt/niimath && \
+    rm niimath_lnx.zip
+
 # Micromamba
 FROM downloader as micromamba
 WORKDIR /
@@ -175,6 +182,7 @@ COPY --from=freesurfer /opt/freesurfer /opt/freesurfer
 COPY --from=afni /opt/afni-latest /opt/afni-latest
 COPY --from=workbench /opt/workbench /opt/workbench
 COPY --from=c3d /opt/convert3d/bin/c3d_affine_tool /usr/bin/c3d_affine_tool
+COPY --from=nmath /opt/niimath /opt/niimath
 
 # Simulate SetUpFreeSurfer.sh
 ENV OS="Linux" \
@@ -201,6 +209,9 @@ ENV PATH="/opt/afni-latest:$PATH" \
 # Workbench config
 ENV PATH="/opt/workbench/bin_linux64:$PATH" \
     LD_LIBRARY_PATH="/opt/workbench/lib_linux64:$LD_LIBRARY_PATH"
+
+# Niimath config
+ENV PATH = "/opt/niimath:$PATH"
 
 # Create a shared $HOME directory
 RUN useradd -m -s /bin/bash -G users fmriprep
