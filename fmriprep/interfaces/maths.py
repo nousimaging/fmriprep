@@ -344,11 +344,6 @@ class GoodVoxMask(SimpleInterface):
     input_spec = BinaryMathInputSpec
     output_spec = SimpleMathOutputSpec
 
-    #-bin -sub %s -mul -1'
-    #binarize
-    #subtract operand from input
-    #multiply by -1
-
     def _run_interface(self, runtime):
         #load in img data
         in_img = nb.load(self.inputs.in_file)
@@ -369,6 +364,32 @@ class GoodVoxMask(SimpleInterface):
 
         #multiply by -1
         out_data = np.multiply(sub_data,-1)
+
+        out_img = nb.Nifti1Image(out_data, in_img.affine, header=in_img.header)
+        out_file = fname_presuffix(self.inputs.in_file, suffix="_bin", newpath=runtime.cwd)
+        out_img.to_filename(out_file)
+
+        self._results["out_file"] = out_file
+        return runtime
+    
+class RibbonNormSmooth(SimpleInterface):
+
+    input_spec = BinaryMathInputSpec
+    output_spec = SimpleMathOutputSpec
+
+    def _run_interface(self, runtime):
+        #load in img data
+        in_img = nb.load(self.inputs.in_file)
+        in_img_data = in_img.get_fdata()
+
+        #set as array for easy broadcasting
+        in_img_data = np.array(in_img_data)
+
+        #load in operand data
+        op_data = np.array(nb.load(self.inputs.operand_file).get_fdata())
+
+        #divide by operand
+        div_data = np.divide(in_img_data,op_data)
 
         out_img = nb.Nifti1Image(out_data, in_img.affine, header=in_img.header)
         out_file = fname_presuffix(self.inputs.in_file, suffix="_bin", newpath=runtime.cwd)
