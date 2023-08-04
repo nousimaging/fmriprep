@@ -428,10 +428,20 @@ It is released under the [CC0]\
 
             fmap_estimators = [fmap for fmap in fmap_estimators if fmap.bids_id in used_estimators]
 
+            # Simplification: Unused estimators are removed from registry
+            # This fiddles with a private attribute, so it may break in future
+            # versions. However, it does mean the BOLD workflow doesn't need to
+            # replicate the logic that got us to the pared down set of estimators
+            # here.
+            final_ids = {fmap.bids_id for fmap in fmap_estimators}
+            unused_ids = fm._estimators.keys() - final_ids
+            for bids_id in unused_ids:
+                del fm._estimators[bids_id]
+
         if fmap_estimators:
             config.loggers.workflow.info(
                 "B0 field inhomogeneity map will be estimated with "
-                f" the following {len(fmap_estimators)} estimators: "
+                f"the following {len(fmap_estimators)} estimator(s): "
                 f"{[e.method for e in fmap_estimators]}."
             )
 
@@ -562,8 +572,8 @@ Setting-up fieldmap "{estimator.bids_id}" ({estimator.method}) with \
         elif estimator.method == fm.EstimatorType.ANAT:
             from sdcflows.workflows.fit.syn import init_syn_preprocessing_wf
 
-            sources = [str(s.path) for s in estimator.sources if s.suffix == "bold"]
-            source_meta = [s.metadata for s in estimator.sources if s.suffix == "bold"]
+            sources = [str(s.path) for s in estimator.sources if s.suffix in ("bold", "sbref")]
+            source_meta = [s.metadata for s in estimator.sources if s.suffix in ("bold", "sbref")]
             syn_preprocessing_wf = init_syn_preprocessing_wf(
                 omp_nthreads=config.nipype.omp_nthreads,
                 debug=config.execution.sloppy,

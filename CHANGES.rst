@@ -1,3 +1,14 @@
+23.1.4 (August 1, 2023)
+=======================
+Patch release in the 23.1.x series.
+
+This release prioritizes single-band reference BOLD images during SyN-SDC schemes.
+Additionally, an indices inconsistency was fixed for CIFTI volumetric data.
+
+* FIX: Pass sbref files to SyN workflow (#3060)
+* FIX: Generate CIFTI volume structure indices in column-major order (nipreps/niworkflows#815)
+
+
 23.1.3 (June 24, 2023)
 ======================
 

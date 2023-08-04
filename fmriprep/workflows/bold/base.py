@@ -289,7 +289,14 @@ def init_func_preproc_wf(bold_file, has_fieldmap=False):
     config.loggers.workflow.info(sbref_msg)
 
     if has_fieldmap:
-        estimator_key = get_estimator(layout, bold_file if not multiecho else bold_file[0])
+        from sdcflows import fieldmaps as fm
+
+        # We may have pruned the estimator collection due to `--ignore fieldmaps`
+        estimator_key = [
+            key
+            for key in get_estimator(layout, bold_file if not multiecho else bold_file[0])
+            if key in fm._estimators
+        ]
 
         if not estimator_key:
             has_fieldmap = False

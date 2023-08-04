@@ -143,7 +143,7 @@ nitransforms==22.0.0
     #   fmriprep (pyproject.toml)
     #   niworkflows
     #   sdcflows
-niworkflows==1.8.0
+niworkflows==1.8.1
     # via
     #   fmriprep (pyproject.toml)
     #   sdcflows
