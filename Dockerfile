@@ -143,7 +143,9 @@ RUN apt-get update && \
                     xvfb && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN echo "machine github.com\nlogin jbh1091 \npassword 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" > /root/.netrc \
+ARG GIT_PAT
+
+RUN echo "machine github.com\nlogin jbh1091 \npassword ${GIT_PAT}" > /root/.netrc \
     && pip install --root-user-action=ignore git+https://github.com/nousimaging/sdcflows.git@master \
     && rm /root/.netrc
 
