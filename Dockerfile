@@ -49,6 +49,7 @@ RUN apt-get update && \
                     bzip2 \
                     ca-certificates \
                     curl \
+                    git \
                     unzip && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
