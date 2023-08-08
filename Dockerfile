@@ -120,6 +120,12 @@ RUN /opt/conda/envs/fmriprep/bin/npm install -g svgo@^2.8 bids-validator@1.11.0 
 COPY requirements.txt /tmp/requirements.txt
 RUN /opt/conda/envs/fmriprep/bin/pip install --no-cache-dir -r /tmp/requirements.txt
 
+ARG GIT_PAT
+
+RUN echo "machine github.com\nlogin jbh1091 \npassword ${GIT_PAT}" > /root/.netrc \
+    && pip install --root-user-action=ignore git+https://github.com/nousimaging/sdcflows.git@master \
+    && rm /root/.netrc
+
 #
 # Main stage
 #
@@ -143,11 +149,6 @@ RUN apt-get update && \
                     xvfb && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ARG GIT_PAT
-
-RUN echo "machine github.com\nlogin jbh1091 \npassword ${GIT_PAT}" > /root/.netrc \
-    && pip install --root-user-action=ignore git+https://github.com/nousimaging/sdcflows.git@master \
-    && rm /root/.netrc
 
 # Configure PPAs for libpng12 and libxp6
 RUN GNUPGHOME=/tmp gpg --keyserver hkps://keyserver.ubuntu.com --no-default-keyring --keyring /usr/share/keyrings/linuxuprising.gpg --recv 0xEA8CACC073C3DB2A \
