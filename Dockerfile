@@ -121,10 +121,15 @@ RUN /opt/conda/envs/fmriprep/bin/npm install -g svgo@^2.8 bids-validator@1.11.0 
 COPY requirements.txt /tmp/requirements.txt
 RUN /opt/conda/envs/fmriprep/bin/pip install --no-cache-dir -r /tmp/requirements.txt
 
+#install FSL-less turing-controlled sdcflows and niworkflows
 ARG GIT_PAT
 
 RUN echo "machine github.com\nlogin jbh1091 \npassword ${GIT_PAT}" > /root/.netrc \
     && pip install --root-user-action=ignore git+https://github.com/nousimaging/sdcflows.git@master \
+    && rm /root/.netrc
+
+RUN echo "machine github.com\nlogin jbh1091 \npassword ${GIT_PAT}" > /root/.netrc \
+    && pip install --root-user-action=ignore git+https://github.com/nousimaging/niworkflows.git@master \
     && rm /root/.netrc
 
 #
