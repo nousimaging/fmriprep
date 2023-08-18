@@ -281,7 +281,7 @@ scipy==1.10.1
     #   scikit-learn
     #   sdcflows
     #   tedana
-sdcflows==2.5.1
+#sdcflows==2.5.1
     # via fmriprep (pyproject.toml)
 seaborn==0.12.2
     # via niworkflows
