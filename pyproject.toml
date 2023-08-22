@@ -25,7 +25,6 @@ dependencies = [
     "nipype >= 1.8.5",
     "nitime",
     "nitransforms >= 21.0.0",
-    "niworkflows @ git+https://github.com/nipreps/niworkflows.git@master",
     "numpy >= 1.22",
     "packaging",
     "pandas",
