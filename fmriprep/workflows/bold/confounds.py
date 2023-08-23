@@ -261,7 +261,7 @@ the edge of the brain, as proposed by [@patriat_improved_2017].
     )
 
     # Frame displacement
-    fdisp = pe.Node(nac.FramewiseDisplacement(parameter_source="SPM"), name="fdisp", mem_gb=mem_gb)
+    fdisp = pe.Node(nac.FramewiseDisplacement(normalize=False, parameter_source="AFNI"), name="fdisp", mem_gb=mem_gb)
 
     # Generate aCompCor probseg maps
     acc_masks = pe.Node(aCompCorMasks(is_aseg=freesurfer), name="acc_masks")
