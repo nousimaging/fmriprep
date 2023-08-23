@@ -572,7 +572,6 @@ freesurfer/bin/mris_warp
 freesurfer/bin/mris_wm_volume
 freesurfer/bin/mris_w_to_curv
 freesurfer/bin/mri_synthesize
-freesurfer/bin/mri_synthstrip
 freesurfer/bin/mri_threshold
 freesurfer/bin/mri_topologycorrection
 freesurfer/bin/mri_train
@@ -581,7 +580,6 @@ freesurfer/bin/mri_transform
 freesurfer/bin/mri_transform_to_COR
 freesurfer/bin/mri_twoclass
 freesurfer/bin/mri_update_gca
-freesurfer/bin/mri_validate_skull_stripped
 freesurfer/bin/mri_vessel_segment
 freesurfer/bin/mri_vol2label
 freesurfer/bin/mri_vol2roi
