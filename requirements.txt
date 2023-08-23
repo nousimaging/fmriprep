@@ -294,8 +294,6 @@ six==1.16.0
     #   apscheduler
     #   isodate
     #   python-dateutil
-smriprep==0.12.1
-    # via fmriprep (pyproject.toml)
 sqlalchemy==2.0.15
     # via pybids
 svgutils==0.3.4
