@@ -119,13 +119,13 @@ AFNI 3dVolReg.
 
     # fmt:off
     workflow.connect([
-        (inputnode, hmc_volreg, [('raw_ref_image', 'ref_file'),
+        (inputnode, hmc_volreg, [('raw_ref_image', 'basefile'),
                               ('bold_file', 'in_file')]),
         (inputnode, fsl2itk, [('raw_ref_image', 'in_source'),
                               ('raw_ref_image', 'in_reference')]),
-        #(mcflirt, fsl2itk, [('mat_file', 'in_files')]),
-        #(mcflirt, normalize_motion, [('par_file', 'in_file')]),
-        (hmc_volreg, outputnode, [('oned_file', 'rmsd_file')]),
+        (hmc_volreg, fsl2itk, [('oned_matrix_save', 'in_files')]),
+        (hmc_volreg, normalize_motion, [('oned_file', 'in_file')]),
+        (hmc_volreg, outputnode, [('oned_file', 'rmsd_file')]), #not actually rms, needs fix
         (fsl2itk, outputnode, [('out_file', 'xforms')]),
         (normalize_motion, outputnode, [('out_file', 'movpar_file')]),
     ])
