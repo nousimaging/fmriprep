@@ -125,11 +125,15 @@ RUN /opt/conda/envs/fmriprep/bin/pip install --no-cache-dir -r /tmp/requirements
 ARG GIT_PAT
 
 RUN echo "machine github.com\nlogin jbh1091 \npassword ${GIT_PAT}" > /root/.netrc \
+    && pip install --root-user-action=ignore git+https://github.com/nousimaging/niworkflows.git@master \
+    && rm /root/.netrc
+
+RUN echo "machine github.com\nlogin jbh1091 \npassword ${GIT_PAT}" > /root/.netrc \
     && pip install --root-user-action=ignore git+https://github.com/nousimaging/sdcflows.git@master \
     && rm /root/.netrc
 
 RUN echo "machine github.com\nlogin jbh1091 \npassword ${GIT_PAT}" > /root/.netrc \
-    && pip install --root-user-action=ignore git+https://github.com/nousimaging/niworkflows.git@master \
+    && pip install --root-user-action=ignore git+https://github.com/nousimaging/smriprep.git@master \
     && rm /root/.netrc
 
 #
