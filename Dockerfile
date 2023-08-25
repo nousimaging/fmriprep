@@ -273,7 +273,7 @@ ENV MKL_NUM_THREADS=1 \
     OMP_NUM_THREADS=1
 
 RUN pip install torch==2.0.0
-#RUN pip install surfa
+RUN pip install surfa
 
 # Installing FMRIPREP
 COPY --from=src /src/fmriprep/dist/*.whl .

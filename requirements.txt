@@ -315,7 +315,7 @@ tifffile==2023.4.12
     # via scikit-image
 toml==0.10.2
     # via fmriprep (pyproject.toml)
-torch==2.0.0
+#torch==2.0.0
     # via fmriprep (pyproject.toml)
 tornado==6.3.2
     # via bokeh
