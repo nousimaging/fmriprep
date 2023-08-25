@@ -34,7 +34,8 @@ dependencies = [
     "tedana ~= 0.0.9",
     "templateflow >= 23.0.0",
     "toml",
-    "torch >= 1.11.0",
+    "torch >= 2.0.0",
+    "surfa",
     "codecarbon",
     "APScheduler",
 ]

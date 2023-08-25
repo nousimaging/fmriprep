@@ -296,6 +296,7 @@ six==1.16.0
     #   python-dateutil
 sqlalchemy==2.0.15
     # via pybids
+surfa
 svgutils==0.3.4
     # via niworkflows
 tedana==0.0.13
@@ -314,7 +315,7 @@ tifffile==2023.4.12
     # via scikit-image
 toml==0.10.2
     # via fmriprep (pyproject.toml)
-torch==1.11.0
+torch==2.0.0
     # via fmriprep (pyproject.toml)
 tornado==6.3.2
     # via bokeh
