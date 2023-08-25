@@ -150,12 +150,14 @@ ENV DEBIAN_FRONTEND="noninteractive" \
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
                     bc \
+                    build-essential \
                     ca-certificates \
                     curl \
                     git \
                     gnupg \
                     lsb-release \
                     netbase \
+                    python3-dev \
                     xvfb && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -269,6 +271,9 @@ ENV LANG="C.UTF-8" \
 # will handle parallelization
 ENV MKL_NUM_THREADS=1 \
     OMP_NUM_THREADS=1
+
+RUN pip install torch==2.0.0
+RUN pip install surfa
 
 # Installing FMRIPREP
 COPY --from=src /src/fmriprep/dist/*.whl .
