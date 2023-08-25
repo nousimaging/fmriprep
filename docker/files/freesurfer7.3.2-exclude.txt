@@ -282,7 +282,6 @@ freesurfer/bin/long_stats_tps
 freesurfer/bin/long_submit_jobs
 freesurfer/bin/long_submit_postproc
 freesurfer/bin/lpcregister
-freesurfer/bin/lta_diff
 freesurfer/bin/make_average_subcort
 freesurfer/bin/make_average_subject
 freesurfer/bin/make_average_surface
@@ -449,7 +448,6 @@ freesurfer/bin/mri_rf_long_label
 freesurfer/bin/mri_rf_long_train
 freesurfer/bin/mri_rf_train
 freesurfer/bin/mri_ribbon
-freesurfer/bin/mri_rigid_register
 freesurfer/bin/mris2rgb
 freesurfer/bin/mris_AA_shrinkwrap
 freesurfer/bin/mris_add_template
@@ -844,7 +842,6 @@ freesurfer/mni/mni.srcbuild.June2015.tgz
 freesurfer/mni/share/man
 freesurfer/mni/share/mni_autoreg
 freesurfer/mni/share/N3
-freesurfer/models
 freesurfer/python/lib/python3.8/test
 freesurfer/python/lib/python3.8/site-packages/caffe2
 freesurfer/python/lib/python3.8/site-packages/sklearn
