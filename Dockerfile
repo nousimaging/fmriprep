@@ -46,6 +46,8 @@ RUN echo "2023.07.20"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
                     binutils \
+                    build-essential \
+                    python3-dev \
                     bzip2 \
                     ca-certificates \
                     curl \
@@ -120,6 +122,9 @@ RUN /opt/conda/envs/fmriprep/bin/npm install -g svgo@^2.8 bids-validator@1.11.0 
 
 COPY requirements.txt /tmp/requirements.txt
 RUN /opt/conda/envs/fmriprep/bin/pip install --no-cache-dir -r /tmp/requirements.txt
+
+RUN pip install torch==2.0.0
+RUN pip install surfa
 
 #install FSL-less turing-controlled sdcflows and niworkflows
 ARG GIT_PAT
@@ -271,9 +276,6 @@ ENV LANG="C.UTF-8" \
 # will handle parallelization
 ENV MKL_NUM_THREADS=1 \
     OMP_NUM_THREADS=1
-
-RUN pip install torch==2.0.0
-RUN pip install surfa
 
 # Installing FMRIPREP
 COPY --from=src /src/fmriprep/dist/*.whl .
