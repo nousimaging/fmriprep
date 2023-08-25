@@ -35,7 +35,6 @@ dependencies = [
     "templateflow >= 23.0.0",
     "toml",
     "torch >= 2.0.0",
-    "surfa",
     "codecarbon",
     "APScheduler",
 ]

@@ -296,7 +296,7 @@ six==1.16.0
     #   python-dateutil
 sqlalchemy==2.0.15
     # via pybids
-surfa
+#surfa
 svgutils==0.3.4
     # via niworkflows
 tedana==0.0.13
