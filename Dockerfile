@@ -123,8 +123,8 @@ RUN /opt/conda/envs/fmriprep/bin/npm install -g svgo@^2.8 bids-validator@1.11.0 
 COPY requirements.txt /tmp/requirements.txt
 RUN /opt/conda/envs/fmriprep/bin/pip install --no-cache-dir -r /tmp/requirements.txt
 
-RUN pip install torch==2.0.0
-RUN pip install surfa
+#RUN pip install torch==2.0.0
+#RUN pip install surfa
 
 #install FSL-less turing-controlled sdcflows and niworkflows
 ARG GIT_PAT
