@@ -46,8 +46,6 @@ RUN echo "2023.07.20"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
                     binutils \
-                    build-essential \
-                    python3-dev \
                     bzip2 \
                     ca-certificates \
                     curl \
@@ -80,6 +78,7 @@ RUN mkdir -p /opt/afni-latest \
         -name "3dTshift" -or \
         -name "3dUnifize" -or \
         -name "3dAutomask" -or \
+        -name "3dSkullStrip" -or \
         -name "3dvolreg" \) -delete
 
 # Connectome Workbench 1.5.0
@@ -122,9 +121,6 @@ RUN /opt/conda/envs/fmriprep/bin/npm install -g svgo@^2.8 bids-validator@1.11.0 
 
 COPY requirements.txt /tmp/requirements.txt
 RUN /opt/conda/envs/fmriprep/bin/pip install --no-cache-dir -r /tmp/requirements.txt
-
-#RUN pip install torch==2.0.0
-#RUN pip install surfa
 
 #install FSL-less turing-controlled sdcflows and niworkflows
 ARG GIT_PAT
