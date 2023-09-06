@@ -36,6 +36,7 @@ dependencies = [
     "toml",
     "codecarbon",
     "APScheduler",
+    "xvfbwrapper >= 0.2.9"
 ]
 dynamic = ["version"]
 
