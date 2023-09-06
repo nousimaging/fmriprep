@@ -175,6 +175,7 @@ RUN apt-get update -qq \
     && apt-get install -y -q --no-install-recommends \
            ed \
            gsl-bin \
+           libgsl-dev \
            libglib2.0-0 \
            libglu1-mesa-dev \
            libglw1-mesa \
