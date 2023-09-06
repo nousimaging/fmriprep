@@ -68,7 +68,6 @@ RUN mkdir -p /opt/afni-latest \
     | tar -xz -C /opt/afni-latest --strip-components 1 \
     --exclude "linux_openmp_64/*.gz" \
     --exclude "linux_openmp_64/funstuff" \
-    --exclude "linux_openmp_64/shiny" \
     --exclude "linux_openmp_64/afnipy" \
     --exclude "linux_openmp_64/lib/RetroTS" \
     --exclude "linux_openmp_64/lib_RetroTS" \
@@ -193,7 +192,7 @@ RUN apt-get update -qq \
     && rm /tmp/multiarch.deb \
     && apt-get install -f \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && gsl2_path="$(find / -name 'libgsl.so.19' || printf '')" \
+    && gsl2_path="$(find / -name 'libgsl.so.' || printf '')" \
     && if [ -n "$gsl2_path" ]; then \
          ln -sfv "$gsl2_path" "$(dirname $gsl2_path)/libgsl.so.0"; \
     fi \
@@ -226,7 +225,8 @@ ENV PERL5LIB="$MINC_LIB_DIR/perl5/5.8.5" \
 # AFNI config
 ENV PATH="/opt/afni-latest:$PATH" \
     AFNI_IMSAVE_WARNINGS="NO" \
-    AFNI_PLUGINPATH="/opt/afni-latest/plugins"
+    AFNI_PLUGINPATH="/opt/afni-latest"
+    LD_LIBRARY_PATH="/opt/afni-latest/lib:$LD_LIBRARY_PATH"
 
 # Workbench config
 ENV PATH="/opt/workbench/bin_linux64:$PATH" \
