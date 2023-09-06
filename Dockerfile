@@ -196,6 +196,10 @@ RUN apt-get update -qq \
     && if [ -n "$gsl2_path" ]; then \
          ln -sfv "$gsl2_path" "$(dirname $gsl2_path)/libgsl.so.0"; \
     fi \
+    && ln -sfv "$(dirname $gsl2path)/libgsl.so.25" "$(dirname $gsl2path)/libgsl.so.19" \
+    && ln -sfv "$(dirname $gsl2path)/libgsl.so.25" "/usr/lib/x86_64-linux-gnu/libgsl.so.19" \
+    && ln -sfv "$(dirname $gsl2path)/libgsl.so.25" "$(dirname $gsl2path)/libgsl.so.0" \
+    && ln -sfv "$(dirname $gsl2path)/libgsl.so.25" "/usr/lib/x86_64-linux-gnu/libgsl.so.0" \
     && ldconfig
 
 # Install files from stages
