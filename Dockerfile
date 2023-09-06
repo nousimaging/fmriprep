@@ -225,7 +225,7 @@ ENV PERL5LIB="$MINC_LIB_DIR/perl5/5.8.5" \
 # AFNI config
 ENV PATH="/opt/afni-latest:$PATH" \
     AFNI_IMSAVE_WARNINGS="NO" \
-    AFNI_PLUGINPATH="/opt/afni-latest"
+    AFNI_PLUGINPATH="/opt/afni-latest" \
     LD_LIBRARY_PATH="/opt/afni-latest:$LD_LIBRARY_PATH"
 
 # Workbench config
