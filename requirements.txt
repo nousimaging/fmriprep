@@ -341,5 +341,7 @@ urllib3==2.0.3
 wrapt==1.15.0
     # via formulaic
 xvfbwrapper==0.2.9
+torch==2.0.0
+surfa
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

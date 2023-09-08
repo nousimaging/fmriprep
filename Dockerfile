@@ -45,6 +45,8 @@ FROM ${BASE_IMAGE} as downloader
 RUN echo "2023.07.20"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+                    build-essential \
+                    python3-dev \
                     binutils \
                     bzip2 \
                     ca-certificates \
