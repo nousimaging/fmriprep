@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling", "hatch-vcs", "nipreps-versions"]
+requires = ["hatchling", "hatch-vcs", "nipreps-versions", "wheel", "Cython"]
 build-backend = "hatchling.build"
 
 [project]
@@ -34,9 +34,11 @@ dependencies = [
     "tedana ~= 0.0.9",
     "templateflow >= 23.0.0",
     "toml",
-    "torch >= 1.10.2",
+    "torch >= 2.0.0",
+    "surfa",
     "codecarbon",
     "APScheduler",
+    "xvfbwrapper >= 0.2.9"
 ]
 dynamic = ["version"]
 

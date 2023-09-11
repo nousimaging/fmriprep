@@ -314,8 +314,6 @@ tifffile==2023.4.12
     # via scikit-image
 toml==0.10.2
     # via fmriprep (pyproject.toml)
-torch==1.11.0
-    # via fmriprep (pyproject.toml)
 tornado==6.3.2
     # via bokeh
 tqdm==4.65.0
@@ -342,6 +340,8 @@ urllib3==2.0.3
     #   sentry-sdk
 wrapt==1.15.0
     # via formulaic
-
+xvfbwrapper==0.2.9
+torch==2.0.0
+surfa
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

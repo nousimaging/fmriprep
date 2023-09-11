@@ -45,6 +45,8 @@ FROM ${BASE_IMAGE} as downloader
 RUN echo "2023.07.20"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+                    build-essential \
+                    python3-dev \
                     binutils \
                     bzip2 \
                     ca-certificates \
@@ -68,7 +70,6 @@ RUN mkdir -p /opt/afni-latest \
     | tar -xz -C /opt/afni-latest --strip-components 1 \
     --exclude "linux_openmp_64/*.gz" \
     --exclude "linux_openmp_64/funstuff" \
-    --exclude "linux_openmp_64/shiny" \
     --exclude "linux_openmp_64/afnipy" \
     --exclude "linux_openmp_64/lib/RetroTS" \
     --exclude "linux_openmp_64/lib_RetroTS" \
@@ -78,6 +79,8 @@ RUN mkdir -p /opt/afni-latest \
         -name "3dTshift" -or \
         -name "3dUnifize" -or \
         -name "3dAutomask" -or \
+        -name "3dSkullStrip" -or \
+        -name "3dClipLevel" -or \
         -name "3dvolreg" \) -delete
 
 # Connectome Workbench 1.5.0
@@ -150,12 +153,14 @@ ENV DEBIAN_FRONTEND="noninteractive" \
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
                     bc \
+                    build-essential \
                     ca-certificates \
                     curl \
                     git \
                     gnupg \
                     lsb-release \
                     netbase \
+                    python3-dev \
                     xvfb && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -171,6 +176,7 @@ RUN apt-get update -qq \
     && apt-get install -y -q --no-install-recommends \
            ed \
            gsl-bin \
+           libgsl-dev \
            libglib2.0-0 \
            libglu1-mesa-dev \
            libglw1-mesa \
@@ -188,10 +194,14 @@ RUN apt-get update -qq \
     && rm /tmp/multiarch.deb \
     && apt-get install -f \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && gsl2_path="$(find / -name 'libgsl.so.19' || printf '')" \
+    && gsl2_path="$(find / -name 'libgsl.so.' || printf '')" \
     && if [ -n "$gsl2_path" ]; then \
          ln -sfv "$gsl2_path" "$(dirname $gsl2_path)/libgsl.so.0"; \
     fi \
+    && ln -sfv "$(dirname $gsl2path)/libgsl.so.25" "$(dirname $gsl2path)/libgsl.so.19" \
+    && ln -sfv "$(dirname $gsl2path)/libgsl.so.25" "/usr/lib/x86_64-linux-gnu/libgsl.so.19" \
+    && ln -sfv "$(dirname $gsl2path)/libgsl.so.25" "$(dirname $gsl2path)/libgsl.so.0" \
+    && ln -sfv "$(dirname $gsl2path)/libgsl.so.25" "/usr/lib/x86_64-linux-gnu/libgsl.so.0" \
     && ldconfig
 
 # Install files from stages
@@ -221,7 +231,8 @@ ENV PERL5LIB="$MINC_LIB_DIR/perl5/5.8.5" \
 # AFNI config
 ENV PATH="/opt/afni-latest:$PATH" \
     AFNI_IMSAVE_WARNINGS="NO" \
-    AFNI_PLUGINPATH="/opt/afni-latest"
+    AFNI_PLUGINPATH="/opt/afni-latest" \
+    LD_LIBRARY_PATH="/opt/afni-latest:$LD_LIBRARY_PATH"
 
 # Workbench config
 ENV PATH="/opt/workbench/bin_linux64:$PATH" \
