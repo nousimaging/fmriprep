@@ -79,7 +79,7 @@ RUN mkdir -p /opt/afni-latest \
         -name "3dTshift" -or \
         -name "3dUnifize" -or \
         -name "3dAutomask" -or \
-        -name "3dvolreg") -delete
+        -name "3dvolreg" \) -delete
 
 # Connectome Workbench 1.5.0
 FROM downloader as workbench
