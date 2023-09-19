@@ -30,6 +30,7 @@ Head-Motion Estimation and Correction (HMC) of BOLD images
 
 from nipype.interfaces import utility as niu
 from nipype.pipeline import engine as pe
+from ...interfaces.patches import Volreg
 
 from ...config import DEFAULT_MEMORY_MIN_GB
 
@@ -83,7 +84,6 @@ def init_bold_hmc_wf(mem_gb: float, omp_nthreads: int, name: str = 'bold_hmc_wf'
     from niworkflows.interfaces.itk import MCFLIRT2ITK
 
     from nipype.algorithms.confounds import FramewiseDisplacement
-    from nipype.interfaces.afni import Despike, Refit, Volreg
 
     workflow = Workflow(name=name)
     workflow.__desc__ = """\
