@@ -113,7 +113,7 @@ AFNI 3dVolReg.
         NormalizeMotionParams(format='AFNI'), name="normalize_motion", mem_gb=DEFAULT_MEMORY_MIN_GB
     )
 
-    fd = pe.Node(FramewiseDisplacement(parameter_source="AFNI"))
+    fd = pe.Node(FramewiseDisplacement(parameter_source="AFNI"),name="fd")
 
 
     # fmt:off
