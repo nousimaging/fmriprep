@@ -100,11 +100,6 @@ AFNI 3dVolReg.
     )
 
     # Head motion correction (hmc)
-    hmc_volreg = pe.Node(
-        Volreg(args="-Fourier -twopass", zpad=4, outputtype="NIFTI_GZ"),
-        name='hmc_volreg',
-        mem_gb=mem_gb * 3,
-    )
 
     mc = pe.Node(
         afni.Volreg(zpad=4, outputtype="NIFTI_GZ", args="-Fourier -prefix NULL -twopass"),
