@@ -28,9 +28,10 @@ Head-Motion Estimation and Correction (HMC) of BOLD images
 
 """
 
-from nipype.interfaces import utility as niu
+from nipype.interfaces import utility as niu, afni
 from nipype.pipeline import engine as pe
 from ...interfaces.patches import Volreg
+from ...interfaces.mc import Volreg2ITK
 
 from ...config import DEFAULT_MEMORY_MIN_GB
 
@@ -81,7 +82,6 @@ def init_bold_hmc_wf(mem_gb: float, omp_nthreads: int, name: str = 'bold_hmc_wf'
     """
     from niworkflows.engine.workflows import LiterateWorkflow as Workflow
     from niworkflows.interfaces.confounds import NormalizeMotionParams
-    from niworkflows.interfaces.itk import MCFLIRT2ITK
 
     from nipype.algorithms.confounds import FramewiseDisplacement
 
@@ -107,27 +107,31 @@ AFNI 3dVolReg.
         mem_gb=mem_gb * 3,
     )
 
-    fsl2itk = pe.Node(MCFLIRT2ITK(), name='fsl2itk', mem_gb=0.05, n_procs=omp_nthreads)
+    mc = pe.Node(
+        afni.Volreg(zpad=4, outputtype="NIFTI_GZ", args="-Fourier -prefix NULL -twopass"),
+        name="mc",
+        mem_gb=mem_gb * 3,
+    )
+
+    mc2itk = pe.Node(Volreg2ITK(), name="mcitk", mem_gb=0.05)
 
     normalize_motion = pe.Node(
         NormalizeMotionParams(format='AFNI'), name="normalize_motion", mem_gb=DEFAULT_MEMORY_MIN_GB
     )
 
-    def _pick_rel(rms_files):
-        return rms_files[-1]
+    fd = pe.Node(FramewiseDisplacement(parameter_source="AFNI"))
+
 
     # fmt:off
     workflow.connect([
-        (inputnode, hmc_volreg, [('raw_ref_image', 'basefile'),
+        (inputnode, mc, [('raw_ref_image', 'basefile'),
                               ('bold_file', 'in_file')]),
-        (inputnode, fsl2itk, [('raw_ref_image', 'in_source'),
-                              ('raw_ref_image', 'in_reference')]),
-        (hmc_volreg, fsl2itk, [('oned_matrix_save', 'in_files')]),
-        (hmc_volreg, normalize_motion, [('oned_file', 'in_file')]),
-        (hmc_volreg, outputnode, [('oned_file', 'rmsd_file')]), #not actually rms, needs fix
-        (fsl2itk, outputnode, [('out_file', 'xforms')]),
+        (mc, mc2itk, [('oned_matrix_save', 'in_file')]),
+        (mc, normalize_motion, [('oned_file', 'in_file')]),
+        (mc, fd, [('oned_file', 'in_file')]),
+        (fd, outputnode, [('out_file', 'rmsd_file')]),
+        (mc2itk, outputnode, [('out_file', 'xforms')]),
         (normalize_motion, outputnode, [('out_file', 'movpar_file')]),
     ])
     # fmt:on
-
     return workflow
