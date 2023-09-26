@@ -30,7 +30,6 @@ Head-Motion Estimation and Correction (HMC) of BOLD images
 
 from nipype.interfaces import utility as niu, afni
 from nipype.pipeline import engine as pe
-from ...interfaces.patches import Volreg
 from ...interfaces.mc import Volreg2ITK
 
 from ...config import DEFAULT_MEMORY_MIN_GB

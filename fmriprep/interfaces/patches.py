@@ -31,7 +31,7 @@ from time import sleep
 
 from nipype.algorithms import confounds as nac
 from numpy.linalg.linalg import LinAlgError
-from nipype.afni.base import AFNICommand, AFNICommandInputSpec
+from nipype.interfaces.afni.base import AFNICommand, AFNICommandInputSpec
 from nipype.base import (
     TraitedSpec,
     traits,
