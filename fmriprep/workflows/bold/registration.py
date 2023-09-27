@@ -27,7 +27,6 @@ Registration workflows
 .. autofunction:: init_bold_reg_wf
 .. autofunction:: init_bold_t1_trans_wf
 .. autofunction:: init_bbreg_wf
-.. autofunction:: init_fsl_bbr_wf
 
 """
 import os
@@ -139,7 +138,6 @@ def init_bold_reg_wf(
     See Also
     --------
       * :py:func:`~fmriprep.workflows.bold.registration.init_bbreg_wf`
-      * :py:func:`~fmriprep.workflows.bold.registration.init_fsl_bbr_wf`
 
     """
     from niworkflows.engine.workflows import LiterateWorkflow as Workflow
@@ -164,21 +162,13 @@ def init_bold_reg_wf(
         name='outputnode',
     )
 
-    if freesurfer:
-        bbr_wf = init_bbreg_wf(
-            use_bbr=use_bbr,
-            bold2t1w_dof=bold2t1w_dof,
-            bold2t1w_init=bold2t1w_init,
-            omp_nthreads=omp_nthreads,
-        )
-    else:
-        bbr_wf = init_fsl_bbr_wf(
-            use_bbr=use_bbr,
-            bold2t1w_dof=bold2t1w_dof,
-            bold2t1w_init=bold2t1w_init,
-            sloppy=sloppy,
-            omp_nthreads=omp_nthreads,
-        )
+    bbr_wf = init_bbreg_wf(
+        use_bbr=use_bbr,
+        bold2t1w_dof=bold2t1w_dof,
+        bold2t1w_init=bold2t1w_init,
+        omp_nthreads=omp_nthreads,
+    )
+
     # fmt:off
     workflow.connect([
         (inputnode, bbr_wf, [
@@ -300,7 +290,6 @@ def init_bold_t1_trans_wf(
     See also
     --------
       * :py:func:`~fmriprep.workflows.bold.registration.init_bbreg_wf`
-      * :py:func:`~fmriprep.workflows.bold.registration.init_fsl_bbr_wf`
 
     """
     from niworkflows.engine.workflows import LiterateWorkflow as Workflow
@@ -440,8 +429,6 @@ def init_bbreg_wf(
     This workflow uses FreeSurfer's ``bbregister`` to register a BOLD image to
     a T1-weighted structural image.
 
-    It is a counterpart to :py:func:`~fmriprep.workflows.bold.registration.init_fsl_bbr_wf`,
-    which performs the same task using FSL's FLIRT with a BBR cost function.
     The ``use_bbr`` option permits a high degree of control over registration.
     If ``False``, standard, affine coregistration will be performed using
     FreeSurfer's ``mri_coreg`` tool.
@@ -486,9 +473,9 @@ def init_bbreg_wf(
     subject_id
         FreeSurfer subject ID (must have folder in SUBJECTS_DIR)
     t1w_brain
-        Unused (see :py:func:`~fmriprep.workflows.bold.registration.init_fsl_bbr_wf`)
+        Unused
     t1w_dseg
-        Unused (see :py:func:`~fmriprep.workflows.bold.registration.init_fsl_bbr_wf`)
+        Unused
 
     Outputs
     -------
@@ -657,273 +644,6 @@ Co-registration was configured with {dof} degrees of freedom{reason}.
     # fmt:on
 
     return workflow
-
-
-def init_fsl_bbr_wf(
-    use_bbr: bool,
-    bold2t1w_dof: AffineDOF,
-    bold2t1w_init: RegistrationInit,
-    omp_nthreads: int,
-    sloppy: bool = False,
-    name: str = 'fsl_bbr_wf',
-):
-    """
-    Build a workflow to run FSL's ``flirt``.
-
-    This workflow uses FSL FLIRT to register a BOLD image to a T1-weighted
-    structural image, using a boundary-based registration (BBR) cost function.
-    It is a counterpart to :py:func:`~fmriprep.workflows.bold.registration.init_bbreg_wf`,
-    which performs the same task using FreeSurfer's ``bbregister``.
-
-    The ``use_bbr`` option permits a high degree of control over registration.
-    If ``False``, standard, rigid coregistration will be performed by FLIRT.
-    If ``True``, FLIRT-BBR will be seeded with the initial transform found by
-    the rigid coregistration.
-    If ``None``, after FLIRT-BBR is run, the resulting affine transform
-    will be compared to the initial transform found by FLIRT.
-    Excessive deviation will result in rejecting the BBR refinement and
-    accepting the original, affine registration.
-
-    Workflow Graph
-        .. workflow ::
-            :graph2use: orig
-            :simple_form: yes
-
-            from fmriprep.workflows.bold.registration import init_fsl_bbr_wf
-            wf = init_fsl_bbr_wf(use_bbr=True, bold2t1w_dof=9, bold2t1w_init='register', omp_nthreads=1)
-
-
-    Parameters
-    ----------
-    use_bbr : :obj:`bool` or None
-        Enable/disable boundary-based registration refinement.
-        If ``None``, test BBR result for distortion before accepting.
-    bold2t1w_dof : 6, 9 or 12
-        Degrees-of-freedom for BOLD-T1w registration
-    bold2t1w_init : str, 'header' or 'register'
-        If ``'header'``, use header information for initialization of BOLD and T1 images.
-        If ``'register'``, align volumes by their centers.
-    name : :obj:`str`, optional
-        Workflow name (default: fsl_bbr_wf)
-
-    Inputs
-    ------
-    in_file
-        Reference BOLD image to be registered
-    t1w_brain
-        Skull-stripped T1-weighted structural image
-    t1w_dseg
-        FAST segmentation of ``t1w_brain``
-    fsnative2t1w_xfm
-        Unused (see :py:func:`~fmriprep.workflows.bold.registration.init_bbreg_wf`)
-    subjects_dir
-        Unused (see :py:func:`~fmriprep.workflows.bold.registration.init_bbreg_wf`)
-    subject_id
-        Unused (see :py:func:`~fmriprep.workflows.bold.registration.init_bbreg_wf`)
-
-    Outputs
-    -------
-    itk_bold_to_t1
-        Affine transform from ``ref_bold_brain`` to T1w space (ITK format)
-    itk_t1_to_bold
-        Affine transform from T1 space to BOLD space (ITK format)
-    out_report
-        Reportlet for assessing registration quality
-    fallback
-        Boolean indicating whether BBR was rejected (rigid FLIRT registration returned)
-
-    """
-    from niworkflows.engine.workflows import LiterateWorkflow as Workflow
-    from niworkflows.interfaces.freesurfer import PatchedLTAConvert as LTAConvert
-    from niworkflows.interfaces.freesurfer import PatchedMRICoregRPT as MRICoregRPT
-    from niworkflows.interfaces.reportlets.registration import FLIRTRPT
-    from niworkflows.utils.images import dseg_label as _dseg_label
-
-    workflow = Workflow(name=name)
-    workflow.__desc__ = """\
-The BOLD reference was then co-registered to the T1w reference using
-`mri_coreg` (FreeSurfer) followed by `flirt` [FSL {fsl_ver}, @flirt]
-with the boundary-based registration [@bbr] cost-function.
-Co-registration was configured with {dof} degrees of freedom{reason}.
-""".format(
-        fsl_ver=FLIRTRPT().version or '<ver>',
-        dof={6: 'six', 9: 'nine', 12: 'twelve'}[bold2t1w_dof],
-        reason=''
-        if bold2t1w_dof == 6
-        else 'to account for distortions remaining in the BOLD reference',
-    )
-
-    inputnode = pe.Node(
-        niu.IdentityInterface(
-            [
-                'in_file',
-                'fsnative2t1w_xfm',
-                'subjects_dir',
-                'subject_id',  # BBRegister
-                't1w_dseg',
-                't1w_brain',
-            ]
-        ),  # FLIRT BBR
-        name='inputnode',
-    )
-    outputnode = pe.Node(
-        niu.IdentityInterface(['itk_bold_to_t1', 'itk_t1_to_bold', 'out_report', 'fallback']),
-        name='outputnode',
-    )
-
-    wm_mask = pe.Node(niu.Function(function=_dseg_label), name='wm_mask')
-    wm_mask.inputs.label = 2  # BIDS default is WM=2
-
-    if bold2t1w_init not in ("register", "header"):
-        raise ValueError(f"Unknown BOLD-T1w initialization option: {bold2t1w_init}")
-
-    if bold2t1w_init == "header":
-        raise NotImplementedError("Header-based registration initialization not supported for FSL")
-
-    mri_coreg = pe.Node(
-        MRICoregRPT(
-            dof=bold2t1w_dof, sep=[4], ftol=0.0001, linmintol=0.01, generate_report=not use_bbr
-        ),
-        name='mri_coreg',
-        n_procs=omp_nthreads,
-        mem_gb=5,
-    )
-
-    lta_to_fsl = pe.Node(LTAConvert(out_fsl=True), name='lta_to_fsl', mem_gb=DEFAULT_MEMORY_MIN_GB)
-
-    invt_bbr = pe.Node(
-        fsl.ConvertXFM(invert_xfm=True), name='invt_bbr', mem_gb=DEFAULT_MEMORY_MIN_GB
-    )
-
-    # BOLD to T1 transform matrix is from fsl, using c3 tools to convert to
-    # something ANTs will like.
-    fsl2itk_fwd = pe.Node(
-        c3.C3dAffineTool(fsl2ras=True, itk_transform=True),
-        name='fsl2itk_fwd',
-        mem_gb=DEFAULT_MEMORY_MIN_GB,
-    )
-    fsl2itk_inv = pe.Node(
-        c3.C3dAffineTool(fsl2ras=True, itk_transform=True),
-        name='fsl2itk_inv',
-        mem_gb=DEFAULT_MEMORY_MIN_GB,
-    )
-    # fmt:off
-    workflow.connect([
-        (inputnode, mri_coreg, [('in_file', 'source_file'),
-                                ('t1w_brain', 'reference_file')]),
-        (inputnode, fsl2itk_fwd, [('t1w_brain', 'reference_file'),
-                                  ('in_file', 'source_file')]),
-        (inputnode, fsl2itk_inv, [('in_file', 'reference_file'),
-                                  ('t1w_brain', 'source_file')]),
-        (mri_coreg, lta_to_fsl, [('out_lta_file', 'in_lta')]),
-        (invt_bbr, fsl2itk_inv, [('out_file', 'transform_file')]),
-        (fsl2itk_fwd, outputnode, [('itk_transform', 'itk_bold_to_t1')]),
-        (fsl2itk_inv, outputnode, [('itk_transform', 'itk_t1_to_bold')]),
-    ])
-    # fmt:on
-
-    # Short-circuit workflow building, use rigid registration
-    if use_bbr is False:
-        # fmt:off
-        workflow.connect([
-            (lta_to_fsl, invt_bbr, [('out_fsl', 'in_file')]),
-            (lta_to_fsl, fsl2itk_fwd, [('out_fsl', 'transform_file')]),
-            (mri_coreg, outputnode, [('out_report', 'out_report')]),
-        ])
-        # fmt:on
-        outputnode.inputs.fallback = True
-
-        return workflow
-
-    flt_bbr = pe.Node(
-        FLIRTRPT(cost_func='bbr', dof=bold2t1w_dof, args="-basescale 1", generate_report=True),
-        name='flt_bbr',
-    )
-
-    FSLDIR = os.getenv('FSLDIR')
-    if FSLDIR:
-        flt_bbr.inputs.schedule = op.join(FSLDIR, 'etc/flirtsch/bbr.sch')
-    else:
-        # Should mostly be hit while building docs
-        LOGGER.warning("FSLDIR unset - using packaged BBR schedule")
-        flt_bbr.inputs.schedule = pkgr.resource_filename('fmriprep', 'data/flirtsch/bbr.sch')
-    # fmt:off
-    workflow.connect([
-        (inputnode, wm_mask, [('t1w_dseg', 'in_seg')]),
-        (inputnode, flt_bbr, [('in_file', 'in_file')]),
-        (lta_to_fsl, flt_bbr, [('out_fsl', 'in_matrix_file')]),
-    ])
-    # fmt:on
-    if sloppy is True:
-        downsample = pe.Node(
-            niu.Function(
-                function=_conditional_downsampling, output_names=["out_file", "out_mask"]
-            ),
-            name='downsample',
-        )
-        # fmt:off
-        workflow.connect([
-            (inputnode, downsample, [("t1w_brain", "in_file")]),
-            (wm_mask, downsample, [("out", "in_mask")]),
-            (downsample, flt_bbr, [('out_file', 'reference'),
-                                   ('out_mask', 'wm_seg')]),
-        ])
-        # fmt:on
-    else:
-        # fmt:off
-        workflow.connect([
-            (inputnode, flt_bbr, [('t1w_brain', 'reference')]),
-            (wm_mask, flt_bbr, [('out', 'wm_seg')]),
-        ])
-        # fmt:on
-
-    # Short-circuit workflow building, use boundary-based registration
-    if use_bbr is True:
-        # fmt:off
-        workflow.connect([
-            (flt_bbr, invt_bbr, [('out_matrix_file', 'in_file')]),
-            (flt_bbr, fsl2itk_fwd, [('out_matrix_file', 'transform_file')]),
-            (flt_bbr, outputnode, [('out_report', 'out_report')]),
-        ])
-        # fmt:on
-        outputnode.inputs.fallback = False
-
-        return workflow
-
-    transforms = pe.Node(niu.Merge(2), run_without_submitting=True, name='transforms')
-    reports = pe.Node(niu.Merge(2), run_without_submitting=True, name='reports')
-
-    compare_transforms = pe.Node(niu.Function(function=compare_xforms), name='compare_transforms')
-
-    select_transform = pe.Node(niu.Select(), run_without_submitting=True, name='select_transform')
-    select_report = pe.Node(niu.Select(), run_without_submitting=True, name='select_report')
-
-    fsl_to_lta = pe.MapNode(LTAConvert(out_lta=True), iterfield=['in_fsl'], name='fsl_to_lta')
-    # fmt:off
-    workflow.connect([
-        (flt_bbr, transforms, [('out_matrix_file', 'in1')]),
-        (lta_to_fsl, transforms, [('out_fsl', 'in2')]),
-        # Convert FSL transforms to LTA (RAS2RAS) transforms and compare
-        (inputnode, fsl_to_lta, [('in_file', 'source_file'),
-                                 ('t1w_brain', 'target_file')]),
-        (transforms, fsl_to_lta, [('out', 'in_fsl')]),
-        (fsl_to_lta, compare_transforms, [('out_lta', 'lta_list')]),
-        (compare_transforms, outputnode, [('out', 'fallback')]),
-        # Select output transform
-        (transforms, select_transform, [('out', 'inlist')]),
-        (compare_transforms, select_transform, [('out', 'index')]),
-        (select_transform, invt_bbr, [('out', 'in_file')]),
-        (select_transform, fsl2itk_fwd, [('out', 'transform_file')]),
-        (flt_bbr, reports, [('out_report', 'in1')]),
-        (mri_coreg, reports, [('out_report', 'in2')]),
-        (reports, select_report, [('out', 'inlist')]),
-        (compare_transforms, select_report, [('out', 'index')]),
-        (select_report, outputnode, [('out', 'out_report')]),
-    ])
-    # fmt:on
-
-    return workflow
-
 
 def compare_xforms(lta_list, norm_threshold=15):
     """
