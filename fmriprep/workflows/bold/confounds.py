@@ -220,7 +220,7 @@ the edge of the brain, as proposed by [@patriat_improved_2017].
                 "bold",
                 "bold_mask",
                 "movpar_file",
-                "rmsd_file",
+                #"rmsd_file",
                 "skip_vols",
                 "t1w_mask",
                 "t1w_tpms",
