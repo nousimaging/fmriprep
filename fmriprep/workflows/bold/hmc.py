@@ -82,7 +82,7 @@ def init_bold_hmc_wf(mem_gb: float, omp_nthreads: int, name: str = 'bold_hmc_wf'
     from niworkflows.engine.workflows import LiterateWorkflow as Workflow
     from niworkflows.interfaces.confounds import NormalizeMotionParams
 
-    from nipype.algorithms.confounds import FramewiseDisplacement
+    #from nipype.algorithms.confounds import FramewiseDisplacement
 
     workflow = Workflow(name=name)
     workflow.__desc__ = """\
@@ -96,7 +96,7 @@ AFNI 3dVolReg.
         niu.IdentityInterface(fields=['bold_file', 'raw_ref_image']), name='inputnode'
     )
     outputnode = pe.Node(
-        niu.IdentityInterface(fields=['xforms', 'movpar_file', 'rmsd_file']), name='outputnode'
+        niu.IdentityInterface(fields=['xforms', 'movpar_file']), name='outputnode'
     )
 
     # Head motion correction (hmc)
@@ -113,7 +113,7 @@ AFNI 3dVolReg.
         NormalizeMotionParams(format='AFNI'), name="normalize_motion", mem_gb=DEFAULT_MEMORY_MIN_GB
     )
 
-    fd = pe.Node(FramewiseDisplacement(parameter_source="AFNI"),name="fd")
+    #fd = pe.Node(FramewiseDisplacement(parameter_source="AFNI"),name="fd")
 
 
     # fmt:off
@@ -122,8 +122,8 @@ AFNI 3dVolReg.
                               ('bold_file', 'in_file')]),
         (mc, mc2itk, [('oned_matrix_save', 'in_file')]),
         (mc, normalize_motion, [('oned_file', 'in_file')]),
-        (mc, fd, [('oned_file', 'in_file')]),
-        (fd, outputnode, [('out_file', 'rmsd_file')]),
+        #(mc, fd, [('oned_file', 'in_file')]),
+        #(fd, outputnode, [('out_file', 'rmsd_file')]),
         (mc2itk, outputnode, [('out_file', 'xforms')]),
         (normalize_motion, outputnode, [('out_file', 'movpar_file')]),
     ])
