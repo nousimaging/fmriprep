@@ -70,6 +70,7 @@ RUN mkdir -p /opt/afni-latest \
     | tar -xz -C /opt/afni-latest --strip-components 1 \
     --exclude "linux_openmp_64/*.gz" \
     --exclude "linux_openmp_64/funstuff" \
+    --exclude "linux_openmp_64/shiny" \
     --exclude "linux_openmp_64/afnipy" \
     --exclude "linux_openmp_64/lib/RetroTS" \
     --exclude "linux_openmp_64/lib_RetroTS" \
@@ -79,8 +80,6 @@ RUN mkdir -p /opt/afni-latest \
         -name "3dTshift" -or \
         -name "3dUnifize" -or \
         -name "3dAutomask" -or \
-        -name "3dSkullStrip" -or \
-        -name "3dClipLevel" -or \
         -name "3dvolreg" \) -delete
 
 # Connectome Workbench 1.5.0
