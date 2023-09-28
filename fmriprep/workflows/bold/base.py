@@ -33,13 +33,13 @@ import os
 import nibabel as nb
 import numpy as np
 from nipype.interfaces import utility as niu
-from nipype.interfaces.fsl import Split as FSLSplit
 from nipype.pipeline import engine as pe
 from niworkflows.utils.connections import listify, pop_file
 
 from ... import config
 from ...interfaces import DerivativesDataSink
 from ...interfaces.reports import FunctionalSummary
+from ...interfaces.patches import TSplit
 from ...utils.meepi import combine_meepi_source
 
 # BOLD workflows
@@ -483,7 +483,7 @@ Non-gridded (surface) resamplings were performed using `mri_vol2surf`
     select_bold = pe.Node(niu.Select(), name="select_bold")
 
     # Top-level BOLD splitter
-    bold_split = pe.Node(FSLSplit(dimension="t"), name="bold_split", mem_gb=mem_gb["filesize"] * 3)
+    bold_split = pe.Node(TSplit(digits=4, out_name='vol'), name="bold_split", mem_gb=mem_gb["filesize"] * 3)
 
     # HMC on the BOLD
     bold_hmc_wf = init_bold_hmc_wf(
