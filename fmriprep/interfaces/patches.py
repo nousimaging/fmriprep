@@ -33,11 +33,11 @@ import os, glob
 from nipype.algorithms import confounds as nac
 from numpy.linalg.linalg import LinAlgError
 from nipype.interfaces.afni.base import AFNICommand, AFNICommandInputSpec
-from nipype.interfaces.base import OutputMultiPath
-from nipype.base import (
+from nipype.interfaces.base import (
     TraitedSpec,
     traits,
     File,
+    OutputMultiPath,
 )
 
 
