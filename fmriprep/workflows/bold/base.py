@@ -33,7 +33,6 @@ import os
 import nibabel as nb
 import numpy as np
 from nipype.interfaces import utility as niu
-from nipype.interfaces.fsl import Split as FSLSplit
 from nipype.pipeline import engine as pe
 from niworkflows.utils.connections import listify, pop_file
 
@@ -413,7 +412,7 @@ Non-gridded (surface) resamplings were performed using `mri_vol2surf`
     summary = pe.Node(
         FunctionalSummary(
             slice_timing=run_stc,
-            registration=("FSL", "FreeSurfer")[freesurfer],
+            registration="FreeSurfer",
             registration_dof=config.workflow.bold2t1w_dof,
             registration_init=config.workflow.bold2t1w_init,
             pe_direction=metadata.get("PhaseEncodingDirection"),

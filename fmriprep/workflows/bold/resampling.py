@@ -43,7 +43,6 @@ from ...interfaces.maths import (StdDevVol, MeanVol, BinaryDiv,
 
 from nipype import Function
 from nipype.interfaces import freesurfer as fs
-from nipype.interfaces import fsl
 from nipype.interfaces import utility as niu
 from nipype.pipeline import engine as pe
 from niworkflows.interfaces.fixes import FixHeaderApplyTransforms as ApplyTransforms

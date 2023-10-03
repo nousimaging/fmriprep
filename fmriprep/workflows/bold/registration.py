@@ -34,7 +34,6 @@ import os.path as op
 import typing as ty
 
 import pkg_resources as pkgr
-from nipype.interfaces import c3, fsl
 from nipype.interfaces import utility as niu
 from nipype.pipeline import engine as pe
 
@@ -68,8 +67,6 @@ def init_bold_reg_wf(
     If FreeSurfer-based preprocessing is enabled, the ``bbregister`` utility
     is used to align the BOLD images to the reconstructed subject, and the
     resulting transform is adjusted to target the T1 space.
-    If FreeSurfer-based preprocessing is disabled, FSL FLIRT is used with the
-    BBR cost function to directly target the T1 space.
 
     Workflow Graph
         .. workflow::
