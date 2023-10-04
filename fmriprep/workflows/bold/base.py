@@ -484,7 +484,7 @@ Non-gridded (surface) resamplings were performed using `mri_vol2surf`
     select_bold = pe.Node(niu.Select(), name="select_bold")
 
     # Top-level BOLD splitter
-    bold_split = pe.Node(SplitSeries(), name="bold_split",mem_gb=mem_gb["filesize" * 3])
+    bold_split = pe.Node(SplitSeries(), name="bold_split",mem_gb=mem_gb["filesize"] * 3)
 
     # HMC on the BOLD
     bold_hmc_wf = init_bold_hmc_wf(
