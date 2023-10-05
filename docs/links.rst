@@ -5,7 +5,6 @@
 .. _`BEP 012`: https://bids-specification.readthedocs.io/en/bep012/05-derivatives/05-functional-derivatives.html
 .. _Installation: installation.html
 .. _workflows: workflows.html
-.. _FSL: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/
 .. _ANTs: https://stnava.github.io/ANTs/
 .. _FreeSurfer: https://surfer.nmr.mgh.harvard.edu/
 .. _`submillimeter reconstruction`: https://surfer.nmr.mgh.harvard.edu/fswiki/SubmillimeterRecon

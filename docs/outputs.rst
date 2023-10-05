@@ -309,7 +309,7 @@ The *fMRIPrep* pipeline generates a large array of possible confounds.
 The most well established confounding variables in neuroimaging are the six head-motion parameters
 (three rotations and three translations) - the common output of the head-motion correction
 (also known as *realignment*) of popular fMRI preprocessing software
-such as SPM_ or FSL_.
+such as SPM_.
 Beyond the standard head-motion parameters, the fMRIPrep pipeline generates a large array
 of possible confounds, which enable researchers to choose the most suitable denoising
 strategy for their downstream analyses.

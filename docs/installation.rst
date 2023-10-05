@@ -75,7 +75,6 @@ nipype_.
 not handled by the Python's packaging system (Pypi) used to deploy
 the ``fmriprep`` package:
 
-- FSL_ (version 6.0.6.2)
 - ANTs_ (version 2.4.4)
 - AFNI_ (version 23.1.05)
 - `C3D <https://sourceforge.net/projects/c3d/>`_ (version 1.3.0)
