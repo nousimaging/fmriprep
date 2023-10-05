@@ -78,7 +78,6 @@ RUN mkdir -p /opt/afni-latest \
     # Keep only what we use
     && find /opt/afni-latest -type f -not \( \
         -name "3dTshift" -or \
-        -name "3dTsplit4D" -or \
         -name "3dUnifize" -or \
         -name "3dAutomask" -or \
         -name "3dvolreg" \) -delete
