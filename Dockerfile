@@ -266,7 +266,7 @@ RUN python fetch_templates.py && \
 # old FSL environment variables, probably not used anymore
 ENV LANG="C.UTF-8" \
     LC_ALL="C.UTF-8" \
-    PYTHONNOUSERSITE=1 \
+    PYTHONNOUSERSITE=1
 
 # Unless otherwise specified each process should only use one thread - nipype
 # will handle parallelization
