@@ -48,7 +48,7 @@ def init_bold_confs_wf(
     regressors_all_comps: bool,
     regressors_dvars_th: float,
     regressors_fd_th: float,
-    freesurfer: bool = False,
+    freesurfer: bool = True,
     name: str = "bold_confs_wf",
 ):
     """
@@ -264,7 +264,7 @@ the edge of the brain, as proposed by [@patriat_improved_2017].
     fdisp = pe.Node(nac.FramewiseDisplacement(parameter_source="SPM"), name="fdisp", mem_gb=mem_gb)
 
     # Generate aCompCor probseg maps
-    acc_masks = pe.Node(aCompCorMasks(is_aseg=freesurfer), name="acc_masks")
+    acc_masks = pe.Node(aCompCorMasks(is_aseg=True), name="acc_masks")
 
     # Resample probseg maps in BOLD space via T1w-to-BOLD transform
     acc_msk_tfm = pe.MapNode(

@@ -55,9 +55,7 @@ LOGGER = logging.getLogger('nipype.interface')
 
 class _aCompCorMasksInputSpec(BaseInterfaceInputSpec):
     in_vfs = InputMultiObject(File(exists=True), desc="Input volume fractions.")
-    is_aseg = traits.Bool(
-        False, usedefault=True, desc="Whether the input volume fractions come from FS' aseg."
-    )
+    is_aseg = traits.Bool(desc="Whether the input volume fractions come from FS' aseg.")
     bold_zooms = traits.Tuple(
         traits.Float, traits.Float, traits.Float, mandatory=True, desc="BOLD series zooms"
     )
